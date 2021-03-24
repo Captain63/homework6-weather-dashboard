@@ -1,0 +1,27 @@
+body {
+    line-height: 1.5;
+}
+
+.navbar {
+    background-color: teal;
+}
+
+.navbar .center {
+    font-size: 2.5rem;
+    color: #fff;
+    text-align: center;
+    margin: auto;
+}
+
+@media only screen and (max-width: 530px) {
+    .navbar .center {
+        font-size: 2rem;
+    }
+}
+
+@media only screen and (max-width: 430px) {
+    .navbar .center i {
+        display: block;
+        line-height: 1.25;
+    }
+}
