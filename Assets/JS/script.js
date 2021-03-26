@@ -3,6 +3,8 @@ const searchForm = document.querySelector("#search-form");
 const currentConditionsUl = document.querySelector("#current-forecast #conditions");
 const currentConditionsH3 = document.querySelector("#current-forecast h3");
 const previousSearches = document.querySelector("#previous-searches");
+const dailyCardContainer = document.querySelector("#daily-forecast");
+const fiveDayHeader = document.querySelector("#five-day");
 
 let searchValue = "";
 
@@ -32,7 +34,7 @@ const updateSearchHistory = () => {
         if (existingButtons.length === 0) {
             for (let i = 0; i < previousSearch.length; i++) {
                 const searchButton = document.createElement("button");
-                searchButton.classList.add("btn");
+                searchButton.classList.add("m-2", "btn", "btn-light");
                 searchButton.dataset.city = previousSearch[i];
                 searchButton.textContent = previousSearch[i];
                 searchButton.addEventListener("click", (event) => {
@@ -49,7 +51,7 @@ const updateSearchHistory = () => {
             })
             for (let i = 0; i < previousSearch.length; i++) {
                 const searchButton = document.createElement("button");
-                searchButton.classList.add("btn");
+                searchButton.classList.add("m-2", "btn", "btn-light");
                 searchButton.dataset.city = previousSearch[i];
                 searchButton.textContent = previousSearch[i];
                 searchButton.addEventListener("click", (event) => {
@@ -91,7 +93,8 @@ const callOpenWeather = (city) => {
             const errorText = document.createElement("li");
             errorText.textContent = "City not found.";
             currentConditionsUl.appendChild(errorText);
-            throw Error(response.statusText);
+            dailyCardContainer.innerHTML = "";
+            fiveDayHeader.classList.add("hidden");
         } else {
             response.json()
         .then(function (data) {
@@ -106,15 +109,16 @@ const callOpenWeather = (city) => {
                     response.json()
             .then(function (data) {
                 console.log(data);
-
-                const icon = ("<img src='http://openweathermap.org/img/w/" + data.current.weather[0].icon + ".png'>");
+                const icon = ("<img src='http://openweathermap.org/img/w/" + data.current.weather[0].icon + ".png' alt='Weather icon'>");
                 currentConditionsH3.innerHTML = cityName + " (" + moment().format("MM/DD/YYYY") + ") " + icon;
                 const liArray = [];
                 
                 currentConditionsUl.innerHTML = "";
 
                 for (let i = 0; i < 4; i++) {
-                    liArray.push(document.createElement("li"));
+                    const li = document.createElement("li");
+                    li.classList.add("mb-2");
+                    liArray.push(li);
                 }
 
                 liArray[0].innerHTML = "Temperature: " + data.current.temp + " &deg;F" ;
@@ -124,6 +128,31 @@ const callOpenWeather = (city) => {
 
                 liArray.forEach(li => {
                     currentConditionsUl.append(li);
+                })
+
+                let dailyArray = [];
+
+                dailyCardContainer.innerHTML = "";
+
+                for (let i = 0; i < 5; i++) {
+                    const dailyCard = document.createElement("div");
+                    dailyCard.innerHTML = `
+                    <div class="p-2 m-2 card bg-info text-white">
+                        <h5>${moment().add(i + 1, "days").format("MM/DD/YYYY")}</h5>
+                        <ul id="conditions">
+                            <li><img src='http://openweathermap.org/img/w/${data.daily[i].weather[0].icon}.png' alt="Weather icon" class="mx-auto"></li>
+                            <li>Temp: ${data.daily[i].temp.day} &deg;F</li>
+                            <li>Humidity: ${data.daily[i].humidity}%</li>
+                        </ul>
+                    </div>`;
+
+                    dailyArray.push(dailyCard);
+                }
+
+                fiveDayHeader.classList.remove("hidden");
+
+                dailyArray.forEach(card => {
+                    dailyCardContainer.appendChild(card);
                 })
                 // Not called under searchForm event listener to ensure search parameter returns result first
                 updateLocalStorage(cityName);
@@ -141,6 +170,9 @@ searchForm.addEventListener("submit", (event) => {
     searchValue = cityNameInput.value.trim("");
     if (searchValue === "") {
         currentConditionsH3.textContent = "Please enter a city!";
+        currentConditionsUl.innerHTML = "";
+        dailyCardContainer.innerHTML = "";
+        fiveDayHeader.classList.add("hidden");
     } else {
         callOpenWeather(searchValue);
         cityNameInput.value = "";
@@ -150,4 +182,4 @@ searchForm.addEventListener("submit", (event) => {
 updateSearchHistory();
 
 // Default city to display
-callOpenWeather("Washington");
+callOpenWeather("Washington D.C.");
