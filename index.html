@@ -32,28 +32,34 @@
                     <div class="card">
                         <h4 class="card-header">Search By City</h3>
                         <form id="search-form" class="card-body">
-                          <input name="city-name" id="city-name" type="text" class="form-input my-2" />
-                          <button type="submit" class="btn btn-info">Search</button>
+                            <!-- Input accept cities to search for from user -->
+                            <input name="city-name" id="city-name" type="text" class="form-input my-2" />
+                            <button type="submit" class="btn btn-info">Search</button>
                         </form>
                       </div>
                 
                       <div id="previous-searches" class="card">
                         <h4 class="card-header">Previous Searches</h3>
+                        <!-- Empty div to hold previous search buttons from script.js -->
                         <div class="card-body d-inline-flex flex-wrap">
                             
                         </div>
                       </div>
                 </div>
+                <!-- Forecast column -->
                 <div class="cold-12 col-md-8 col-lg-9">
+                    <!-- Current Forecast Container -->
                     <div class="card" id="current-forecast">
                         <h3 class="card-header"></h3>
                         <div class="card-body">
-                          <ul id="conditions">
+                            <!-- Empty ul to hold current weather lis from script.js -->
+                            <ul id="conditions">
 
-                          </ul>
+                            </ul>
                         </div>
                     </div>
-                    <h4 class="p-2" id="five-day">5-Day Forecast</h4>
+                    <h4 class="p-2 mt-3" id="five-day">5-Day Forecast</h4>
+                    <!-- Empty div to hold dailyCards from script.js -->
                     <div class="d-inline-flex flex-wrap p-2" id="daily-forecast">
                         
                     </div>
