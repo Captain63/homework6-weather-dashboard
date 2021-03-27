@@ -1,7 +1,6 @@
 // DOM declarations
 const cityNameInput = document.querySelector("#city-name");
 const searchForm = document.querySelector("#search-form");
-const existingButtons = document.querySelectorAll("#previous-searches button");
 const currentConditionsUl = document.querySelector("#current-forecast #conditions");
 const currentConditionsH3 = document.querySelector("#current-forecast h3");
 const previousSearches = document.querySelector("#previous-searches");
@@ -31,41 +30,30 @@ const updateSearchHistory = () => {
     // Pulls localStorage results of previous searches
     previousSearch = JSON.parse(localStorage.getItem("searches"));
 
-    if (existingButtons.length === 0) {
-        for (let i = 0; i < previousSearch.length; i++) {
-            const searchButton = document.createElement("button");
-            searchButton.classList.add("m-2", "btn", "btn-light");
-            // Sets data-city attribute on button for event listener to reference
-            searchButton.dataset.city = previousSearch[i];
-            searchButton.textContent = previousSearch[i];
-            searchButton.addEventListener("click", (event) => {
-                // References data-city property to call API
-                callOpenWeather(event.target.dataset.city);
-            })
-            previousSearchContainer.appendChild(searchButton); 
+    // Declared under function to ensure list is updated each time
+    const existingButtons = document.querySelectorAll("#previous-searches button");
+
+    existingButtons.forEach(button => {
+        // Ensures buttons aren't repeated for existing searches
+        for (let i = 0; i < previousSearch.length; i++)
+        if (button.dataset.city.includes(previousSearch[i])) {
+            previousSearch.splice(i, i + 1);
         }
-    } else {
-        existingButtons.forEach(button => {
-            // Ensures buttons aren't repeated for existing searches
-            for (let i = 0; i < previousSearch.length; i++)
-            if (button.dataset.city.includes(previousSearch[i])) {
-                previousSearch.splice(i, i + 1);
-            }
+    })
+    for (let i = 0; i < previousSearch.length; i++) {
+        const searchButton = document.createElement("button");
+        searchButton.classList.add("m-2", "btn", "btn-light");
+        // Sets data-city attribute on button for event listener to reference
+        searchButton.dataset.city = previousSearch[i];
+        searchButton.textContent = previousSearch[i];
+        searchButton.addEventListener("click", (event) => {
+            // References data-city property to call API
+            callOpenWeather(event.target.dataset.city);
         })
-        for (let i = 0; i < previousSearch.length; i++) {
-            const searchButton = document.createElement("button");
-            searchButton.classList.add("m-2", "btn", "btn-light");
-            // Sets data-city attribute on button for event listener to reference
-            searchButton.dataset.city = previousSearch[i];
-            searchButton.textContent = previousSearch[i];
-            searchButton.addEventListener("click", (event) => {
-                // References data-city property to call API
-                callOpenWeather(event.target.dataset.city);
-            })
-            previousSearchContainer.appendChild(searchButton); 
-        }
+        previousSearchContainer.appendChild(searchButton); 
     }
 }
+
 
 const updateLocalStorage = (city) => {
     // Ensures searched city isn't pushed into array (and then localStorage) if city has already been searched
@@ -86,6 +74,7 @@ const callOpenWeather = (city) => {
     // Creates URL for initial API call to retrieve latitude and longitude of requested city
     const apiUrlCoords = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&units=imperial&appid=0656324568a33303c80afd015f0c27f8";
 
+    // Initial fetch to retrieve lat + lng
     fetch(apiUrlCoords)
     .then(function (response) {
         // Handler if city is not found
@@ -96,39 +85,49 @@ const callOpenWeather = (city) => {
             errorText.textContent = "City not found.";
             currentConditionsUl.appendChild(errorText);
             dailyCardContainer.innerHTML = "";
-            // Removes .hidden class in case previous search resulted in error
+            // Adds .hidden class in case previous search resulted in error
             fiveDayHeader.classList.add("hidden");
         } else {
+            // Converts API response into json object
             response.json()
         .then(function (data) {
-            console.log(data)
-
+            // Pulls city name into variable for later
             const cityName = data.name;
 
-            const oneCallUrl = "https://api.openweathermap.org/data/2.5/onecall?lat=" + data.coord.lat + "&lon=" + data.coord.lon + "&exclude=minutely,hourly,alerts&units=imperial&appid=0656324568a33303c80afd015f0c27f8";
+            // Creates URL for oneCall OpenWeather API from latitude and longitude of previous OpenWeather call
+            const oneCallUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${data.coord.lat}&lon=${data.coord.lon}&exclude=minutely,hourly,alerts&units=imperial&appid=0656324568a33303c80afd015f0c27f8`;
+            
+            // Fetch to retrive current and daily weather info
             fetch(oneCallUrl)
             .then(function (response) {
                 if (response.ok) {
+                    // Converts API response into json object
                     response.json()
             .then(function (data) {
-                console.log(data);
+                // Creates icon to display current weather status
                 const icon = ("<img src='http://openweathermap.org/img/w/" + data.current.weather[0].icon + ".png' alt='Weather icon'>");
+
+                // Displays city name, weather icon, and current date pulled from moment.js
                 currentConditionsH3.innerHTML = cityName + " (" + moment().format("MM/DD/YYYY") + ") " + icon;
+
                 const liArray = [];
                 
+                // Clears any existing list items from previous searches
                 currentConditionsUl.innerHTML = "";
 
+                // Creates four list items to hold current weather
                 for (let i = 0; i < 4; i++) {
                     const li = document.createElement("li");
                     li.classList.add("mb-2");
                     liArray.push(li);
                 }
 
+                // Populates contents of list items with properties of json object
                 liArray[0].innerHTML = "Temperature: " + data.current.temp + " &deg;F" ;
                 liArray[1].textContent = "Humidity: " + data.current.humidity + "%";
                 liArray[2].textContent = "Wind Speed: " + data.current.wind_speed + " MPH";
 
-                // Evaluation to populate c
+                // Evaluation to populate UV Index color based on value
                 if (data.current.uvi <= 2) {
                     liArray[3].innerHTML = `UV Index: <button class="btn btn-info uv">${data.current.uvi}</button>`;
                 } else if (data.current.uvi > 2 && data.current.uvi <= 5) {
@@ -139,16 +138,20 @@ const callOpenWeather = (city) => {
                     liArray[3].innerHTML = `UV Index: <button class="btn btn-danger uv">${data.current.uvi}</button>`;
                 }
 
+                // Appends each updated list item to specified ul
                 liArray.forEach(li => {
                     currentConditionsUl.append(li);
                 })
 
                 let dailyArray = [];
 
+                // Clears existing cards for 5-Day Forecast container
                 dailyCardContainer.innerHTML = "";
 
+                // Loop to populate cards for next 5 days with information from daily openCall property
                 for (let i = 0; i < 5; i++) {
                     const dailyCard = document.createElement("div");
+                    // Populates forecast data for each card. Uses index number + 1 to advance moment.js call from current date by one day (pulls dates for next 5 days after today)
                     dailyCard.innerHTML = `
                     <div class="p-2 m-2 card bg-info text-white">
                         <h5>${moment().add(i + 1, "days").format("MM/DD/YYYY")}</h5>
@@ -159,12 +162,14 @@ const callOpenWeather = (city) => {
                         </ul>
                     </div>`;
 
+                    // Pushes card into dailyArray to then be appended to container
                     dailyArray.push(dailyCard);
                 }
 
-                // Removes .hidden class in case previous search resulted in error
+                // Removes .hidden class to now display in case previous search resulted in error
                 fiveDayHeader.classList.remove("hidden");
 
+                // Appends cards stored in dailyArray to container
                 dailyArray.forEach(card => {
                     dailyCardContainer.appendChild(card);
                 })
