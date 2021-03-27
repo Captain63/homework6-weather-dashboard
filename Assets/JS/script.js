@@ -107,7 +107,7 @@ const callOpenWeather = (city) => {
                     response.json()
             .then(function (data) {
                 // Creates icon to display current weather status
-                const icon = ("<img src='http://openweathermap.org/img/w/" + data.current.weather[0].icon + ".png' alt='Weather icon'>");
+                const icon = ("<img src='https://openweathermap.org/img/w/" + data.current.weather[0].icon + ".png' alt='Weather icon'>");
 
                 // Displays city name, weather icon, and current date pulled from moment.js
                 currentConditionsH3.innerHTML = cityName + " (" + moment().format("MM/DD/YYYY") + ") " + icon;
@@ -158,7 +158,7 @@ const callOpenWeather = (city) => {
                     <div class="p-2 m-2 card bg-info text-white">
                         <h5>${moment().add(i + 1, "days").format("MM/DD/YYYY")}</h5>
                         <ul id="conditions">
-                            <li><img src='http://openweathermap.org/img/w/${data.daily[i].weather[0].icon}.png' alt="Weather icon" class="mx-auto"></li>
+                            <li><img src='https://openweathermap.org/img/w/${data.daily[i].weather[0].icon}.png' alt="Weather icon" class="mx-auto"></li>
                             <li>Temp: ${data.daily[i].temp.day} &deg;F</li>
                             <li>Humidity: ${data.daily[i].humidity}%</li>
                         </ul>
