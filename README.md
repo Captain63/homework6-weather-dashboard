@@ -22,5 +22,5 @@ localStorage is leveraged to save search queries so that user can access previou
 ## Live Application
 https://captain63.github.io/homework6-weather-dashboard/
 
-## Screenshot
+## Screenshot of Application
 ![Screenshot of running application showing current weather and 5-day forecast for Washington D.C.](./Assets/Images/completed-application.PNG)
