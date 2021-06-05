@@ -1,5 +1,7 @@
 # OpenWeather Dashboard
 
+![MIT license badge](./Assets/Images/mit-license.svg)
+
 ## Table of Contents
 - [Project Overview](#project-overview)
 - [Live Application](#live-application)
