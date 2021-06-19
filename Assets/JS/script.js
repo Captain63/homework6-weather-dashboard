@@ -207,8 +207,8 @@ searchForm.addEventListener("submit", (event) => {
     }
 });
 
-// Runs on load time to populate search buttons for previous searches in localStorage
+// Called at run time to populate search buttons for previous searches in localStorage
 updateSearchHistory();
 
-// Default city to display on load time
+// Default city to display at run time
 callOpenWeather("Washington D.C.");
