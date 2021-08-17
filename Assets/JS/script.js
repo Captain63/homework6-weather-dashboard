@@ -109,8 +109,8 @@ const callOpenWeather = (city) => {
                 // Creates icon to display current weather status
                 const icon = ("<img src='https://openweathermap.org/img/w/" + data.current.weather[0].icon + ".png' alt='Weather icon'>");
 
-                // Displays city name, weather icon, and current date pulled from moment.js
-                currentConditionsH3.innerHTML = cityName + " (" + moment().format("MM/DD/YYYY") + ") " + icon;
+                // Displays city name, weather icon, and current date
+                currentConditionsH3.innerHTML = cityName + " (" + new Date(Date.now()).toLocaleDateString + ") " + icon;
 
                 const liArray = [];
                 
@@ -152,7 +152,6 @@ const callOpenWeather = (city) => {
 
                 // Loop to populate cards for next 5 days with information from daily openCall property
                 for (let i = 0; i < 5; i++) {
-                    const dailyCard = document.createElement("div");
                     // Populates forecast data for each card. Uses index number + 1 to advance moment.js call from current date by one day (pulls dates for next 5 days after today)
                     dailyCard.innerHTML = `
                     <div class="p-2 m-2 card bg-info text-white">
