@@ -20,7 +20,6 @@ localStorage is leveraged to save search queries so that user can access previou
 
 ### External Libraries/APIs Used:
 - [OpenWeather API](https://openweathermap.org/api)
-- [Moment.js](https://momentjs.com/)
 - [Bootstrap](https://getbootstrap.com/)
 
 ## Live Application
