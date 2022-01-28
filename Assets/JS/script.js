@@ -125,19 +125,22 @@ const callOpenWeather = (city) => {
                 }
 
                 // Populates contents of list items with properties of json object
-                liArray[0].innerHTML = "Temperature: " + data.current.temp + " &deg;F" ;
+                liArray[0].innerHTML = "Temperature: " + Math.floor(data.current.temp) + " &deg;F" ;
                 liArray[1].textContent = "Humidity: " + data.current.humidity + "%";
-                liArray[2].textContent = "Wind Speed: " + data.current.wind_speed + " MPH";
+                liArray[2].textContent = "Wind Speed: " + Math.floor(data.current.wind_speed) + " MPH";
+
+                // Store in variable to condense logic statements and rounds down
+                const uvi = Math.floor(data.current.uvi);
 
                 // Evaluation to populate UV Index color based on value
-                if (data.current.uvi <= 2) {
-                    liArray[3].innerHTML = `UV Index: <button class="btn btn-info uv">${data.current.uvi}</button>`;
-                } else if (data.current.uvi > 2 && data.current.uvi <= 5) {
-                    liArray[3].innerHTML = `UV Index: <button class="btn btn-success uv">${data.current.uvi}</button>`;
-                } else if (data.current.uvi > 5 && data.current.uvi <= 8) {
-                    liArray[3].innerHTML = `UV Index: <button class="btn btn-warning uv">${data.current.uvi}</button>`;
+                if (uvi <= 2) {
+                    liArray[3].innerHTML = `UV Index: <button class="btn btn-info uv">${uvi}</button>`;
+                } else if (uvi > 2 && uvi <= 5) {
+                    liArray[3].innerHTML = `UV Index: <button class="btn btn-success uv">${uvi}</button>`;
+                } else if (uvi > 5 && uvi <= 8) {
+                    liArray[3].innerHTML = `UV Index: <button class="btn btn-warning uv">${uvi}</button>`;
                 } else {
-                    liArray[3].innerHTML = `UV Index: <button class="btn btn-danger uv">${data.current.uvi}</button>`;
+                    liArray[3].innerHTML = `UV Index: <button class="btn btn-danger uv">${uvi}</button>`;
                 }
 
                 // Appends each updated list item to specified ul
@@ -159,7 +162,7 @@ const callOpenWeather = (city) => {
                         <h5>${moment().add(i + 1, "days").format("MM/DD/YYYY")}</h5>
                         <ul id="conditions">
                             <li><img src='https://openweathermap.org/img/w/${data.daily[i].weather[0].icon}.png' alt="Weather icon" class="mx-auto"></li>
-                            <li>Temp: ${data.daily[i].temp.day} &deg;F</li>
+                            <li>Temp: ${Math.floor(data.daily[i].temp.day)} &deg;F</li>
                             <li>Humidity: ${data.daily[i].humidity}%</li>
                         </ul>
                     </div>`;
